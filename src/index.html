@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    {{ message }}
+</div>
+<div id="app-2">
+  <span v-bind:title="message">
+    Hover your mouse over me for a few seconds
+    to see my dynamically bound title!
+  </span>
+</div>
+<div id="app-3">
+    <p v-if="seen">现在你看到我了</p>
+</div>
+<div id="app-4">
+    <ol>
+        <li v-for="todo in todos">
+            {{todo.text}}
+
+        </li>
+    </ol>
+</div>
+<div id="app-5">
+    <p>{{message}}</p>
+    <button v-on:click="reverseMessage">Reverse Message</button>
+</div>
+<div id="app-6">
+    <p>{{message}}</p>
+    <input v-model="message">
+</div>
+<div id="app-7">
+    <ol>
+        <!-- 创建一个 todo-item 组件的实例 -->
+        <todo-item v-for="item in groceryList" v-bind:todo="item"></todo-item>
+    </ol>
+
+</div>
+
+<div id="app-8">
+
+</div>
+
+<div id="appVbind" v-bind:title="dynamicId"><a v-on:[eventname]="doSomething" >{{eventname}}--doSomething</a></div>
+
+<div id="example">
+    <p>Original message: "{{ message }}"</p>
+    <p>Computed reversed message: "{{ reversedMessage }}"</p>
+</div>
+
+<div id="demo">{{ fullName }}------{{firstName}}</div>
+
+<div id="watch-example">
+    <p>
+        Ask a yes/no question:
+        <input v-model="question">
+    </p>
+    <p>{{ answer }}</p>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script>
+
+
+    var watchExampleVm = new Vue({
+        el: '#watch-example',
+        data : {
+            question: '',
+            answer: 'I cannot give you an answer until you ask a question!'
+        },
+        watch : {
+            question: function (newQuestion, oldQuestion) {
+                this.answer = 'Waiting for you to stop typing...';
+                this.debouncedGetAnswer();
+            }
+        },
+        created : function(){
+            this.debouncedGetAnswer = _.debounce(this.getAnswer, 5000);
+        },
+        methods : {
+            getAnswer : function () {
+                if(this.question.indexOf("?")===-1) {
+                    this.answer = "Questions usually contain a question mark.:-)";
+                    return;
+                }
+                this.answer = "Thinking...";
+                var vm = this;
+                axios.get('https://yesno.wtf/api').then(function (response) {
+                    vm.answer = _.capitalize(response.data.answer);
+                })
+            }
+        }
+    })
+
+    var vm = new Vue({
+        el: '#demo',
+        data: {
+            firstName: 'Foo1',
+            lastName: 'Bar'
+        },
+        computed: {
+            fullName: {
+                get:function () {
+                    return this.firstName + ' ' + this.lastName
+                },
+                set:function (newVal) {
+                    var names = newVal.split(' ')
+                    this.firstName = names[0]
+                    this.lastName = names[names.length - 1]
+                }
+            }
+        }
+    })
+
+    // vm.firstName = 'test';
+    vm.fullName="Lebron James";
+
+    var example = new Vue({
+        el:"#example",
+        data : {
+            message : '你咋不上天!'
+        },
+        computed: {
+            reversedMessage : function () {
+                return this.message.split('').reverse().join('');
+            }
+        }
+    })
+
+    example.message='中华人民共和国';
+
+    var appVbind = new Vue({
+        el:'#appVbind',
+        data : {
+            dynamicId : 'appVbindId',
+            url : 'http://www.baidu.com',
+            eventname : 'focus'
+        },
+        methods: {
+            doSomething : function () {
+                alert('dosomething')
+            }
+        }
+    })
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+    var app2 = new Vue({
+        el: '#app-2',
+        data: {
+            message: 'You loaded this page on ' + new Date().toLocaleString()
+        }
+    })
+    var app3 = new Vue({
+        el:"#app-3",
+        data : {
+            seen : true
+        }
+    })
+    var app4 = new Vue({
+        el:"#app-4",
+        data : {
+            todos : [{
+                text : 'Learn JavaScript' },
+                { text: 'Learn Vue' },
+                { text: 'Build something awesome'
+            }]
+        }
+    })
+
+    var app5 = new Vue({
+        el:"#app-5",
+        data : {
+            message:"hello vue.js"
+        },
+        methods : {
+            reverseMessage : function () {
+                this.message = this.message.split('').reverse().join('');
+            }
+        }
+    })
+
+    var app6 = new Vue({
+        el:"#app-6",
+        data : {
+            message : 'Test two-way binding between form input and app state '
+        }
+    })
+
+    Vue.component("todo-item",
+        {
+            props : ['todo'],
+            template: '<li>{{todo.text}}</li>'
+        })
+
+    var app7 = new Vue({
+        el:"#app-7",
+        data : {
+            groceryList : [
+                { id: 0, text: 'Vegetables' },
+                { id: 1, text: 'Cheese' },
+                { id: 2, text: 'Whatever else humans are supposed to eat' }
+            ]
+        }
+    })
+
+    const NotFound = { template: '<p>Page not found</p>' }
+    const Home = { template: '<p>home page</p>' }
+    const About = { template: '<p>about page</p>' }
+
+    const routes = {
+        '/': Home,
+        '/about': About
+    }
+
+    new Vue({
+        el: '#app-8',
+        data: {
+            currentRoute: window.location.pathname
+        },
+        computed: {
+            ViewComponent () {
+                return routes[this.currentRoute] || NotFound
+            }
+        },
+        render (h) { return h(this.ViewComponent) }
+    })
+
+</script>
+</html>

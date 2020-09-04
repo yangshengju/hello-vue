@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Input</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="inputapp">
+        <input type="checkbox" id="jack" value="Jack" v-model="checkeds1">
+        <label for="jack">Jack</label>
+        <input type="checkbox" id="john" value="John" v-model="checkeds1">
+        <label for="john">John</label>
+        <input type="checkbox" id="mike" value="Mike" v-model="checkeds1">
+        <label for="mike">Mike</label>
+        <br>
+        <span>Checked names: {{ checkeds1 }}</span>
+    </div>
+
+    <div id="example-4">
+        <input type="radio" id="one" value="One" v-model="picked">
+        <label for="one">One</label>
+        <br>
+        <input type="radio" id="two" value="Two" v-model="picked">
+        <label for="two">Two</label>
+        <br>
+        <span>Picked: {{ picked }}</span>
+    </div>
+
+    <div id="example-5">
+        <select v-model="selected" >
+            <option disabled value="">请选择</option>
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+        </select>
+        <span>Selected: {{ selected }}</span>
+    </div>
+
+    <div id="example-6">
+        <select v-model="selected" multiple style="width: 50px;">
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+        </select>
+        <br>
+        <span>Selected: {{ selected }}</span>
+    </div>
+
+    <div id="example-7">
+        <select v-model="selected" multiple style="width: 50px;" >
+            <option v-for="item in options" v-bind:value="item.value">{{item.text}}</option>
+        </select>
+        <br>
+        <span>Selected: {{ selected }}</span>
+    </div>
+
+    <div id = "example-8">
+        <ol>
+            <todoItem v-for="item in grocerylist" :todo="item">
+            </todoItem>
+        </ol>
+    </div>
+
+    <div id="app">
+        <p>{{ foo }}</p>
+        <!-- 这里的 `foo` 不会更新！ -->
+        <button v-on:click="foo = 'baz'">Change it</button>
+    </div>
+
+    <div id="example-9">
+        <p>Using mustaches: {{ rawHtml }}</p>
+        <p>Using v-html directive: <span v-html="rawHtml"></span></p>
+    </div>
+</body>
+<script>
+
+    var vue_ex_9 = new Vue({
+        el:"#example-9",
+        data : {
+            rawHtml : '<h1>Test</h1>'
+        }
+    })
+
+    Vue.component("todoitem", {
+        props : ['todo'],
+        template: "<li>{{todo.text}}<slot></slot></li>"
+    })
+
+    var vue_ex_8 = new Vue({
+        el:"#example-8",
+        data : {
+            grocerylist : [{
+                text:'patato',id:3
+            },{
+                text:'tomato',id:8
+            },{
+                text:'apple',id:13
+            },{
+                text:'beef',id:33
+            }]
+        }
+    })
+
+
+    var vue = new Vue({
+        el:"#inputapp",
+        data : {
+            checkeds1:['Mike']
+        }
+    })
+
+    var vue_ex_4 = new Vue({
+        el:"#example-4",
+        data : {
+            picked : 'Two'
+        }
+    })
+
+    var vue_ex_5 = new Vue({
+        el:"#example-5",
+        data : {
+            selected : 'B'
+        }
+    })
+
+    var vue_ex_6 = new Vue({
+        el:"#example-6",
+        data : {
+            selected : ['B','C']
+        }
+    })
+
+    var vue_ex_7 = new Vue({
+        el:"#example-7",
+        data : {
+            selected : ['A','B'],
+            options : [{
+                text :'One',value : 'A'
+            },{
+                text: 'Two',value:'B'
+            },{
+                text: 'Three',value:'C'
+            },{
+                text: 'Four',value:'D'
+            },{
+                text: 'Five',value:'E'
+            }]
+        }
+    })
+
+    var obj = {
+        foo: 'bar'
+    }
+
+    //Object.freeze(obj)
+
+    new Vue({
+        el: '#app',
+        data: obj
+    })
+</script>
+
+</html>
